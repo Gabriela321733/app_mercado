@@ -240,7 +240,7 @@ if tela == "Mercado":
         .str.replace("%", "", regex=False)
         .str.replace(",", ".", regex=False)
         .astype(float)
-        / 100
+        
 )
 
     # Base agregada por papel (Quantidade + Taxa média)
@@ -253,6 +253,7 @@ if tela == "Mercado":
             })
             .reset_index()
     )
+
 
 # =====================
 # AJUSTE DA TAXA % REMUNERAÇÃO (OBRIGATÓRIO)
@@ -284,8 +285,6 @@ if tela == "Mercado":
         * df_valor["Preço"]
         * df_valor["Taxa % remuneração"]
     )
-
-    
 
     top_fin = df_valor.sort_values("Financeiro", ascending=False).head(10)
     top_fin["rank"] = range(len(top_fin))
@@ -319,27 +318,104 @@ if tela == "Mercado":
 
         col1, col2 = st.columns(2)
 
+            # 🔑 DEFINE O PREÇO DO PAPEL AQUI
+        preco_papel = df_preco.loc[
+            df_preco["Código IF"] == papel, "Preço"
+        ].iloc[0]
+
+        col1, col2 = st.columns(2)
+
+        # with col1:
+        #     st.markdown("**🏦 Top 5 Doadores**")
+        #     st.dataframe(
+        #         base.groupby("Nome doador")["Quantidade"]
+        #         .sum().sort_values(ascending=False).head(5)
+        #         .reset_index()
+        #         .style.format({"Quantidade": "{:,.0f}".format}),
+        #         use_container_width=True,
+        #         hide_index=True
+        #     )
+
         with col1:
             st.markdown("**🏦 Top 5 Doadores**")
+
+            top_doadores = (
+                base
+                    .groupby("Nome doador", as_index=False)
+                    .agg({
+                        "Quantidade": "sum",
+                        "Taxa % remuneração": "mean"
+                    })
+            )
+
+            top_doadores["Financeiro"] = (
+                top_doadores["Quantidade"]
+                * preco_papel
+                * top_doadores["Taxa % remuneração"]
+            )
+
             st.dataframe(
-                base.groupby("Nome doador")["Quantidade"]
-                .sum().sort_values(ascending=False).head(5)
-                .reset_index()
-                .style.format({"Quantidade": "{:,.0f}".format}),
+                top_doadores
+                    .sort_values("Quantidade", ascending=False)
+                    .head(5)[[
+                        "Nome doador",
+                        "Quantidade",
+                        "Financeiro"
+                    ]]
+                    .style.format({
+                        "Quantidade": "{:,.0f}",
+                        "Financeiro": "R$ {:,.2f}"
+                    }),
                 use_container_width=True,
                 hide_index=True
             )
 
+
+        # with col2:
+        #     st.markdown("**📥 Top 5 Tomadores**")
+        #     st.dataframe(
+        #         base.groupby("Nome tomador")["Quantidade"]
+        #         .sum().sort_values(ascending=False).head(5)
+        #         .reset_index()
+        #         .style.format({"Quantidade": "{:,.0f}".format}),
+        #         use_container_width=True,
+        #         hide_index=True
+        #     )
+
         with col2:
             st.markdown("**📥 Top 5 Tomadores**")
+
+            top_tomadores = (
+                base
+                    .groupby("Nome tomador", as_index=False)
+                    .agg({
+                        "Quantidade": "sum",
+                        "Taxa % remuneração": "mean"
+                    })
+            )
+
+            top_tomadores["Financeiro"] = (
+                top_tomadores["Quantidade"]
+                * preco_papel
+                * top_tomadores["Taxa % remuneração"]
+            )
+
             st.dataframe(
-                base.groupby("Nome tomador")["Quantidade"]
-                .sum().sort_values(ascending=False).head(5)
-                .reset_index()
-                .style.format({"Quantidade": "{:,.0f}".format}),
+                top_tomadores
+                    .sort_values("Quantidade", ascending=False)
+                    .head(5)[[
+                        "Nome tomador",
+                        "Quantidade",
+                        "Financeiro"
+                    ]]
+                    .style.format({
+                        "Quantidade": "{:,.0f}",
+                        "Financeiro": "R$ {:,.2f}"
+                    }),
                 use_container_width=True,
                 hide_index=True
             )
+
 
         qtd_itau_d = base[base["Nome doador"] == "ITAU CV S/A"]["Quantidade"].sum()
         qtd_itau_t = base[base["Nome tomador"] == "ITAU CV S/A"]["Quantidade"].sum()
