@@ -357,7 +357,7 @@ if tela == "Mercado":
             """
         )
 
-        st.divider()
+    st.divider()
 
 # =====================
 # TELA PAPEL
@@ -456,38 +456,38 @@ if tela == "Papel":
 # =====================
 # MATRIZ DOADOR x TOMADOR (PIVOT)
 # =====================
-st.subheader("📊 Matriz Doador × Tomador (Quantidade de Ações)")
+    st.subheader("📊 Matriz Doador × Tomador (Quantidade de Ações)")
 
-pivot_doador_tomador = pd.pivot_table(
-    df_papel,                 # já vem filtrado por papel + data
-    values="Quantidade",
-    index="Código",           # Código DOADOR (coluna J)
-    columns="Código.1",       # Código TOMADOR (coluna L)
-    aggfunc="sum",
-    fill_value=0
-)
+    pivot_doador_tomador = pd.pivot_table(
+        df_papel,                 # já vem filtrado por papel + data
+        values="Quantidade",
+        index="Código",           # Código DOADOR (coluna J)
+        columns="Código.1",       # Código TOMADOR (coluna L)
+        aggfunc="sum",
+        fill_value=0
+    )
 
-st.dataframe(
-    pivot_doador_tomador.style.format("{:,.0f}"),
-    use_container_width=True
-)
+    st.dataframe(
+        pivot_doador_tomador.style.format("{:,.0f}"),
+        use_container_width=True
+    )
 
-st.subheader("📊 Tabela Dinâmica — Taxa Média (%)")
+    st.subheader("📊 Tabela Dinâmica — Taxa Média (%)")
 
-pivot_taxa = pd.pivot_table(
-    df_papel,
-    values="Taxa % remuneração",
-    index="Código",        # DOADOR
-    columns="Código.1",    # TOMADOR
-    aggfunc="mean"
-)
+    pivot_taxa = pd.pivot_table(
+        df_papel,
+        values="Taxa % remuneração",
+        index="Código",        # DOADOR
+        columns="Código.1",    # TOMADOR
+        aggfunc="mean"
+    )
 
-# Formatação para exibição (%)
-pivot_taxa_formatado = pivot_taxa.applymap(
-    lambda x: f"{x*100:.1f}" if pd.notnull(x) else ""
-)
+    # Formatação para exibição (%)
+    pivot_taxa_formatado = pivot_taxa.applymap(
+        lambda x: f"{x*100:.1f}" if pd.notnull(x) else ""
+    )
 
-st.table(pivot_taxa_formatado)
+    st.table(pivot_taxa_formatado)
 
 
 # =====================
