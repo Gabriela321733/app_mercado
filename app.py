@@ -176,7 +176,7 @@ if tela == "Mercado":
     st.subheader("📥 Maiores Tomadores (Quantidade)")
     top_tomadores = (
         df_filtrado.groupby("Nome tomador")["Quantidade"]
-        .sum().sort_values(ascending=False).head(7).reset_index()
+        .sum().sort_values(ascending=False).head(15).reset_index()
     )
 
     st.dataframe(
@@ -191,7 +191,7 @@ if tela == "Mercado":
     st.subheader("📤 Maiores Doadores (Quantidade)")
     top_doadores = (
         df_filtrado.groupby("Nome doador")["Quantidade"]
-        .sum().sort_values(ascending=False).head(7).reset_index()
+        .sum().sort_values(ascending=False).head(15).reset_index()
     )
 
     st.dataframe(
@@ -206,7 +206,7 @@ if tela == "Mercado":
     st.subheader("📊 Papéis Mais Negociados (Quantidade)")
     top_papeis = (
         df_filtrado.groupby("Código IF")["Quantidade"]
-        .sum().sort_values(ascending=False).head(10).reset_index()
+        .sum().sort_values(ascending=False).head(15).reset_index()
     )
     top_papeis["rank"] = range(len(top_papeis))
 
@@ -230,6 +230,7 @@ if tela == "Mercado":
 
 # -------- GRÁFICO FINANCEIRO --------
 
+    st.subheader("📊 Papéis que mais rendem dinheiro")
     # Carrega tabela de preços
     df_preco = pd.read_excel("preços.xlsx")
 
@@ -309,7 +310,7 @@ if tela == "Mercado":
 
     # -------- TOP 3 PAPÉIS DETALHADOS --------
     st.subheader("🏆 Detalhamento dos Papéis que Mais Geraram Dinheiro")
-    top3_papeis = top_fin["Código IF"].head(3).tolist()
+    top3_papeis = top_fin["Código IF"].head(5).tolist()
 
     for papel in top3_papeis:
         st.markdown(f"### 📄 Papel: **{papel}**")
@@ -322,7 +323,7 @@ if tela == "Mercado":
             st.markdown("**🏦 Top 3 Doadores**")
             st.dataframe(
                 base.groupby("Nome doador")["Quantidade"]
-                .sum().sort_values(ascending=False).head(3)
+                .sum().sort_values(ascending=False).head(5)
                 .reset_index()
                 .style.format({"Quantidade": "{:,.0f}".format}),
                 use_container_width=True,
@@ -333,7 +334,7 @@ if tela == "Mercado":
             st.markdown("**📥 Top 3 Tomadores**")
             st.dataframe(
                 base.groupby("Nome tomador")["Quantidade"]
-                .sum().sort_values(ascending=False).head(3)
+                .sum().sort_values(ascending=False).head(5)
                 .reset_index()
                 .style.format({"Quantidade": "{:,.0f}".format}),
                 use_container_width=True,
@@ -412,13 +413,13 @@ if tela == "Papel":
     # =====================
     # TOP 6 TOMADORES
     # =====================
-    st.subheader("📥 Top 6 Tomadores (Quantidade)")
+    st.subheader("📥 Top 8 Tomadores (Quantidade)")
 
     top6_tomadores = (
         df_papel.groupby("Nome tomador")["Quantidade"]
         .sum()
         .sort_values(ascending=False)
-        .head(6)
+        .head(8)
         .reset_index()
     )
 
@@ -434,13 +435,13 @@ if tela == "Papel":
     # =====================
     # TOP 6 DOADORES
     # =====================
-    st.subheader("📤 Top 6 Doadores (Quantidade)")
+    st.subheader("📤 Top 8 Doadores (Quantidade)")
 
     top6_doadores = (
         df_papel.groupby("Nome doador")["Quantidade"]
         .sum()
         .sort_values(ascending=False)
-        .head(6)
+        .head(8)
         .reset_index()
     )
 
