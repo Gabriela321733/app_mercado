@@ -320,7 +320,7 @@ if tela == "Mercado":
         col1, col2 = st.columns(2)
 
         with col1:
-            st.markdown("**🏦 Top 3 Doadores**")
+            st.markdown("**🏦 Top 5 Doadores**")
             st.dataframe(
                 base.groupby("Nome doador")["Quantidade"]
                 .sum().sort_values(ascending=False).head(5)
@@ -331,7 +331,7 @@ if tela == "Mercado":
             )
 
         with col2:
-            st.markdown("**📥 Top 3 Tomadores**")
+            st.markdown("**📥 Top 5 Tomadores**")
             st.dataframe(
                 base.groupby("Nome tomador")["Quantidade"]
                 .sum().sort_values(ascending=False).head(5)
