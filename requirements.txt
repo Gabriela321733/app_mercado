@@ -3,6 +3,8 @@ pandas
 numpy
 matplotlib
 plotly
+openpyxl
+
 
 
 
