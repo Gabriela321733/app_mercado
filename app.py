@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from pathlib import Path
 import base64
+from pandas.tseries.offsets import BDay
 
 # =====================
 # CONFIGURAÇÃO DA PÁGINA
@@ -148,11 +149,40 @@ tela = st.sidebar.radio(
 # =====================
 # FILTRO DE DATA GLOBAL
 # =====================
+# st.subheader("📅 Período de Análise")
+
+# c1, c2 = st.columns(2)
+# data_ini = c1.date_input("Data inicial", df["Data de referência"].min())
+# data_fim = c2.date_input("Data final", df["Data de referência"].max())
+
+# df_filtrado = df[
+#     (df["Data de referência"] >= pd.to_datetime(data_ini)) &
+#     (df["Data de referência"] <= pd.to_datetime(data_fim))
+# ]
+
 st.subheader("📅 Período de Análise")
 
+# --- calcula D-1 útil ---
+hoje = pd.Timestamp.today().normalize()
+d_1_util = hoje - BDay(1)
+
+# garante que está dentro do range do dataframe
+data_min = df["Data de referência"].min()
+data_max = df["Data de referência"].max()
+
+data_default = min(max(d_1_util, data_min), data_max)
+
 c1, c2 = st.columns(2)
-data_ini = c1.date_input("Data inicial", df["Data de referência"].min())
-data_fim = c2.date_input("Data final", df["Data de referência"].max())
+
+data_ini = c1.date_input(
+    "Data inicial",
+    value=data_default.date()
+)
+
+data_fim = c2.date_input(
+    "Data final",
+    value=data_default.date()
+)
 
 df_filtrado = df[
     (df["Data de referência"] >= pd.to_datetime(data_ini)) &
@@ -179,6 +209,12 @@ if tela == "Mercado":
         .sum().sort_values(ascending=False).head(15).reset_index()
     )
 
+    top_tomadores.insert(
+    0,
+    "Posição",
+    [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
+    )
+
     st.dataframe(
         top_tomadores.style
         .format({"Quantidade": "{:,.0f}".format})
@@ -192,6 +228,12 @@ if tela == "Mercado":
     top_doadores = (
         df_filtrado.groupby("Nome doador")["Quantidade"]
         .sum().sort_values(ascending=False).head(15).reset_index()
+    )
+
+    top_doadores.insert(
+    0,
+    "Posição",
+    [f"{i}º" for i in range(1, len(top_doadores) + 1)]
     )
 
     st.dataframe(
@@ -286,7 +328,7 @@ if tela == "Mercado":
         * df_valor["Taxa % remuneração"]
     )
 
-    top_fin = df_valor.sort_values("Financeiro", ascending=False).head(10)
+    top_fin = df_valor.sort_values("Financeiro", ascending=False).head(20)
     top_fin["rank"] = range(len(top_fin))
 
     fig_fin = px.bar(
@@ -303,8 +345,21 @@ if tela == "Mercado":
         yaxis=dict(autorange="reversed"),
         coloraxis_showscale=False,
         plot_bgcolor="rgba(0,0,0,0)",
-        paper_bgcolor="rgba(0,0,0,0)"
+        paper_bgcolor="rgba(0,0,0,0)",
+        height=450  # 🔑 ISSO CRIA O SCROLL
+
     )
+
+    fig_fin.update_layout(
+        yaxis=dict(
+            autorange="reversed",
+            automargin=True
+        ),
+        coloraxis_showscale=False,
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)"   # gráfico alto (importante!)
+    )
+    
     st.plotly_chart(fig_fin, use_container_width=True)
 
     # -------- TOP 3 PAPÉIS DETALHADOS --------
@@ -324,18 +379,7 @@ if tela == "Mercado":
         ].iloc[0]
 
         col1, col2 = st.columns(2)
-
-        # with col1:
-        #     st.markdown("**🏦 Top 5 Doadores**")
-        #     st.dataframe(
-        #         base.groupby("Nome doador")["Quantidade"]
-        #         .sum().sort_values(ascending=False).head(5)
-        #         .reset_index()
-        #         .style.format({"Quantidade": "{:,.0f}".format}),
-        #         use_container_width=True,
-        #         hide_index=True
-        #     )
-
+ 
         with col1:
             st.markdown("**🏦 Top 5 Doadores**")
 
@@ -348,16 +392,32 @@ if tela == "Mercado":
                     })
             )
 
+
             top_doadores["Financeiro"] = (
                 top_doadores["Quantidade"]
                 * preco_papel
                 * top_doadores["Taxa % remuneração"]
             )
 
+            top_doadores = (
+                top_doadores
+                .sort_values("Financeiro", ascending=False)
+                .head(5)
+                .reset_index(drop=True)
+            )
+
+                          # ranking
+            top_doadores.insert(
+                0,
+                "Posição",
+                [f"{i}º" for i in range(1, len(top_doadores) + 1)]
+            )
+
             st.dataframe(
                 top_doadores
                     .sort_values("Quantidade", ascending=False)
                     .head(5)[[
+                        "Posição",
                         "Nome doador",
                         "Quantidade",
                         "Financeiro"
@@ -370,17 +430,6 @@ if tela == "Mercado":
                 hide_index=True
             )
 
-
-        # with col2:
-        #     st.markdown("**📥 Top 5 Tomadores**")
-        #     st.dataframe(
-        #         base.groupby("Nome tomador")["Quantidade"]
-        #         .sum().sort_values(ascending=False).head(5)
-        #         .reset_index()
-        #         .style.format({"Quantidade": "{:,.0f}".format}),
-        #         use_container_width=True,
-        #         hide_index=True
-        #     )
 
         with col2:
             st.markdown("**📥 Top 5 Tomadores**")
@@ -400,10 +449,24 @@ if tela == "Mercado":
                 * top_tomadores["Taxa % remuneração"]
             )
 
+            top_tomadores = (
+                top_tomadores
+                .sort_values("Financeiro", ascending=False)
+                .head(5)
+                .reset_index(drop=True)
+            )
+
+            top_tomadores.insert(
+                0,
+                "Posição",
+                [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
+            )
+
             st.dataframe(
                 top_tomadores
                     .sort_values("Quantidade", ascending=False)
                     .head(5)[[
+                        "Posição",
                         "Nome tomador",
                         "Quantidade",
                         "Financeiro"
@@ -429,8 +492,8 @@ if tela == "Mercado":
         st.markdown(
             f"""
             **🔎 Representatividade do Itaú**
-            - Como **Doador**: {txt_d}
-            - Como **Tomador**: {txt_t}
+            - **Doador**: {txt_d}
+            - **Tomador**: {txt_t}
             """
         )
 
@@ -482,7 +545,7 @@ if tela == "Papel":
     col1, col2 = st.columns(2)
 
     col1.metric("Quantidade de Negócios", f"{total_negocios:,}")
-    col2.metric("Taxa Média do Mercado (%)", f"{taxa_media:.2f}%")
+    col2.metric("Taxa Média Calculada (%)", f"{taxa_media:.2f}%")
 
     st.divider()
 
@@ -497,6 +560,12 @@ if tela == "Papel":
         .sort_values(ascending=False)
         .head(8)
         .reset_index()
+    )
+
+    top6_tomadores.insert(
+        0,
+        "Posição",
+        [f"{i}º" for i in range(1, len(top6_tomadores) + 1)]
     )
 
     st.dataframe(
@@ -519,6 +588,12 @@ if tela == "Papel":
         .sort_values(ascending=False)
         .head(8)
         .reset_index()
+    )
+
+    top6_doadores.insert(
+        0,
+        "Posição",
+        [f"{i}º" for i in range(1, len(top6_doadores) + 1)]
     )
 
     st.dataframe(
@@ -551,20 +626,65 @@ if tela == "Papel":
 
     st.subheader("📊 Tabela Dinâmica — Taxa Média (%)")
 
-    pivot_taxa = pd.pivot_table(
-        df_papel,
-        values="Taxa % remuneração",
-        index="Código",        # DOADOR
-        columns="Código.1",    # TOMADOR
-        aggfunc="mean"
+    # -------------------------------------------------
+    # BASE
+    # -------------------------------------------------
+    df_base = df_papel.copy()
+
+    # 🔑 GARANTE QUE CÓDIGO É STRING
+    df_base["Código"] = df_base["Código"].astype(str)
+    df_base["Código.1"] = df_base["Código.1"].astype(str)
+
+    # -------------------------------------------------
+    # TAXA COMO TEXTO PERCENTUAL (IGUAL EXCEL)
+    # -------------------------------------------------
+    df_base["Taxa % remuneração"] = (
+        df_base["Taxa % remuneração"]
+            .mul(100)
+            .round(2)
+            .astype(str)
+            .str.replace(".", ",", regex=False)
+            + "%"
     )
 
-    # Formatação para exibição (%)
-    pivot_taxa_formatado = pivot_taxa.applymap(
-        lambda x: f"{x*100:.1f}" if pd.notnull(x) else ""
+    # -------------------------------------------------
+    # PIVOT IGUAL AO EXCEL
+    # -------------------------------------------------
+    pivot_excel = pd.pivot_table(
+        df_base,
+        values="Quantidade",
+        index=["Código", "Taxa % remuneração"],
+        columns="Código.1",
+        aggfunc="sum",
+        margins=True,
+        margins_name="Grand Total"
     )
 
-    st.table(pivot_taxa_formatado)
+    # -------------------------------------------------
+    # AJUSTA NOMES DOS EIXOS (MULTIINDEX CORRETO)
+    # -------------------------------------------------
+    pivot_excel = pivot_excel.rename_axis(
+        index=["Row Labels", ""],
+        columns="Column Labels"
+    )
+
+    # -------------------------------------------------
+    # FORMATAÇÃO NUMÉRICA
+    # -------------------------------------------------
+    pivot_excel_style = (
+        pivot_excel
+            .style
+            .format("{:,.0f}", na_rep="")
+    )
+
+    # -------------------------------------------------
+    # EXIBIÇÃO
+    # -------------------------------------------------
+    st.dataframe(
+        pivot_excel_style,
+        use_container_width=True,
+        height=520
+    )
 
 
 # =====================
