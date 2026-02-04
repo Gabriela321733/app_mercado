@@ -605,24 +605,54 @@ if tela == "Papel":
         hide_index=True
     )
 
-# =====================
-# MATRIZ DOADOR x TOMADOR (PIVOT)
-# =====================
     st.subheader("📊 Matriz Doador × Tomador (Quantidade de Ações)")
 
+    # -------------------------------------------------
+    # PIVOT COM SOMAS VERTICAL E HORIZONTAL
+    # -------------------------------------------------
     pivot_doador_tomador = pd.pivot_table(
-        df_papel,                 # já vem filtrado por papel + data
+        df_papel,
         values="Quantidade",
-        index="Código",           # Código DOADOR (coluna J)
-        columns="Código.1",       # Código TOMADOR (coluna L)
+        index="Código",           # DOADOR
+        columns="Código.1",       # TOMADOR
         aggfunc="sum",
+        margins=True,
+        margins_name="Grand Total",
         fill_value=0
     )
 
+    # -------------------------------------------------
+    # ORDENA PELO TOTAL VERTICAL (DESC)
+    # -------------------------------------------------
+    if "Grand Total" in pivot_doador_tomador.columns:
+
+        # separa a linha de total
+        total_linha = pivot_doador_tomador.loc[["Grand Total"]]
+
+        # remove temporariamente
+        pivot_sem_total = pivot_doador_tomador.drop(index="Grand Total")
+
+        # ordena pelo total vertical
+        pivot_sem_total = pivot_sem_total.sort_values(
+            by="Grand Total",
+            ascending=False
+        )
+
+        # recoloca o total no final
+        pivot_doador_tomador = pd.concat(
+            [pivot_sem_total, total_linha]
+        )
+
+    # -------------------------------------------------
+    # EXIBIÇÃO
+    # -------------------------------------------------
     st.dataframe(
-        pivot_doador_tomador.style.format("{:,.0f}"),
+        pivot_doador_tomador
+            .style
+            .format("{:,.0f}"),
         use_container_width=True
     )
+
 
     st.subheader("📊 Tabela Dinâmica — Taxa Média (%)")
 
@@ -660,14 +690,35 @@ if tela == "Papel":
         margins_name="Grand Total"
     )
 
-    # -------------------------------------------------
-    # AJUSTA NOMES DOS EIXOS (MULTIINDEX CORRETO)
+
+    if "Grand Total" in pivot_excel.columns:
+
+        # separa a linha Grand Total como DataFrame
+        gt_linha = pivot_excel.loc[["Grand Total"]]
+
+        # remove temporariamente da tabela
+        pivot_sem_gt = pivot_excel.drop(index="Grand Total")
+
+        # ordena pelo total
+        pivot_sem_gt = pivot_sem_gt.sort_values(
+            by="Grand Total",
+            ascending=False
+        )
+
+        # recoloca o Grand Total no final
+        pivot_excel = pd.concat(
+            [pivot_sem_gt, gt_linha]
+        )
+
     # -------------------------------------------------
     pivot_excel = pivot_excel.rename_axis(
         index=["Row Labels", ""],
         columns="Column Labels"
     )
 
+    pivot_excel = pivot_excel.applymap(
+    lambda x: 0 if x is None or pd.isna(x) else x
+    )
     # -------------------------------------------------
     # FORMATAÇÃO NUMÉRICA
     # -------------------------------------------------
