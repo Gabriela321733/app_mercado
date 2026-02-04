@@ -263,7 +263,7 @@ if tela == "Mercado":
     )
     fig_qtd.update_traces(texttemplate="%{text:,}", textposition="outside")
     fig_qtd.update_layout(
-        yaxis=dict(autorange="reversed"),
+        yaxis=dict(autorange="reversed",title="Papel"),
         coloraxis_showscale=False,
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)"
@@ -342,7 +342,7 @@ if tela == "Mercado":
     )
     fig_fin.update_traces(texttemplate="R$ %{text:,.0f}", textposition="outside")
     fig_fin.update_layout(
-        yaxis=dict(autorange="reversed"),
+        yaxis=dict(autorange="reversed",title="Papel"),
         coloraxis_showscale=False,
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -766,3 +766,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
