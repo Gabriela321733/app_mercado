@@ -209,49 +209,20 @@ if tela == "Mercado":
     # Criar coluna Volume
     df_filtrado["Volume"] = df_filtrado["Quantidade"] * df_filtrado["Preço"]
     
-    # top_tomadores = (
-    #     df_filtrado.groupby("Nome tomador")["Quantidade"]
-    #     .sum().sort_values(ascending=False).head(15).reset_index()
-    # )
-
-    # top_tomadores.insert(
-    # 0,
-    # "Posição",
-    # [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
-    # )
-
-    # st.dataframe(
-    #     top_tomadores.style
-    #     .format({"Quantidade": "{:,.0f}".format})
-    #     .apply(lambda r: highlight_itau(r, "Nome tomador"), axis=1),
-    #     use_container_width=True,
-    #     hide_index=True
-    # )
-
-    # Agrupar
     top_tomadores = (
-        df_filtrado
-        .groupby("Nome tomador")[["Quantidade", "Volume"]]
-        .sum()
-        .sort_values("Volume", ascending=False)
-        .head(15)
-        .reset_index()
+        df_filtrado.groupby("Nome tomador")["Quantidade"]
+        .sum().sort_values(ascending=False).head(15).reset_index()
     )
-    
-    # Inserir ranking
+
     top_tomadores.insert(
-        0,
-        "Posição",
-        [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
+    0,
+    "Posição",
+    [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
     )
-    
-    # Mostrar tabela
+
     st.dataframe(
         top_tomadores.style
-        .format({
-            "Quantidade": "{:,.0f}",
-            "Volume": "R$ {:,.2f}"
-        })
+        .format({"Quantidade": "{:,.0f}".format})
         .apply(lambda r: highlight_itau(r, "Nome tomador"), axis=1),
         use_container_width=True,
         hide_index=True
@@ -802,5 +773,6 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
