@@ -204,11 +204,6 @@ if tela == "Mercado":
 
     # -------- TOP 7 TOMADORES --------
     st.subheader("📥 Maiores Tomadores (Quantidade)")
-
-    df_preco = pd.read_excel("preços.xlsx")
-    # Criar coluna Volume
-    df_filtrado["Volume"] = df_filtrado["Quantidade"] * df_filtrado["Preço"]
-    
     top_tomadores = (
         df_filtrado.groupby("Nome tomador")["Quantidade"]
         .sum().sort_values(ascending=False).head(15).reset_index()
@@ -230,8 +225,6 @@ if tela == "Mercado":
 
     # -------- TOP 7 DOADORES --------
     st.subheader("📤 Maiores Doadores (Quantidade)")
-    df_preco = pd.read_excel("preços.xlsx")
-    
     top_doadores = (
         df_filtrado.groupby("Nome doador")["Quantidade"]
         .sum().sort_values(ascending=False).head(15).reset_index()
@@ -773,6 +766,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-
 
