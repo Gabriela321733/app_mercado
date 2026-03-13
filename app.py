@@ -431,19 +431,19 @@ if tela == "Mercado":
             #     hide_index=True
             # )
 
-                st.dataframe(
-                    top_doadores[[
-                        "Posição",
-                        "Nome doador",
-                        "Quantidade",
-                        "Financeiro"
-                    ]].style.format({
-                        "Quantidade": "{:,.0f}",
-                        "Financeiro": "R$ {:,.2f}"
-                    }),
-                    use_container_width=True,
-                    hide_index=True
-                )
+            st.dataframe(
+                top_doadores[[
+                    "Posição",
+                    "Nome doador",
+                    "Quantidade",
+                    "Financeiro"
+                ]].style.format({
+                    "Quantidade": "{:,.0f}",
+                    "Financeiro": "R$ {:,.2f}"
+                }),
+                use_container_width=True,
+                hide_index=True
+            )
 
         with col2:
             st.markdown("**📥 Top 5 Tomadores**")
@@ -780,5 +780,6 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
