@@ -379,6 +379,9 @@ if tela == "Mercado":
         ].iloc[0]
 
         col1, col2 = st.columns(2)
+
+        base["Nome doador"] = base["Nome doador"].fillna("Sem informação")
+        base["Nome tomador"] = base["Nome tomador"].fillna("Sem informação")
  
         with col1:
             st.markdown("**🏦 Top 5 Doadores**")
@@ -766,4 +769,5 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
