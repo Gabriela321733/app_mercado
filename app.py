@@ -498,7 +498,7 @@ if tela == "Mercado":
             st.dataframe(
                 top_tomadores[[
                     "Posição",
-                    "Nome doador",
+                    "Nome Tomador",
                     "Quantidade",
                     "Financeiro"
                 ]].style.format({
@@ -508,7 +508,6 @@ if tela == "Mercado":
                 use_container_width=True,
                 hide_index=True
             )
-
 
         qtd_itau_d = base[base["Nome doador"] == "ITAU CV S/A"]["Quantidade"].sum()
         qtd_itau_t = base[base["Nome tomador"] == "ITAU CV S/A"]["Quantidade"].sum()
@@ -796,6 +795,7 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
