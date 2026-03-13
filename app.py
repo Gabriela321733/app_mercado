@@ -85,11 +85,11 @@ df = pd.concat(dfs, ignore_index=True)
 # =====================
 # TRATAMENTO DA BASE
 # =====================
-# df.columns = (
-#     df.columns.astype(str)
-#     .str.replace("\ufeff", "", regex=False)
-#     .str.strip()
-# )
+df.columns = (
+    df.columns.astype(str)
+    .str.replace("\ufeff", "", regex=False)
+    .str.strip()
+)
 
 # df["Quantidade"] = (
 #     df["Quantidade"]
@@ -119,6 +119,9 @@ df["Taxa % remuneração"] = pd.to_numeric(
     df["Taxa % remuneração"],
     errors="coerce"
 ) / 100
+
+df["Nome doador"] = df["Nome doador"].fillna("Sem informação")
+df["Nome tomador"] = df["Nome tomador"].fillna("Sem informação")
 
 # Remove papel problemático
 df = df[df["Código IF"] != "AZUL53"]
@@ -518,3 +521,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
