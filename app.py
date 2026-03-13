@@ -498,7 +498,7 @@ if tela == "Mercado":
             st.dataframe(
                 top_tomadores[[
                     "Posição",
-                    "Nome Tomador",
+                    "Nome tomador",
                     "Quantidade",
                     "Financeiro"
                 ]].style.format({
@@ -795,6 +795,7 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
