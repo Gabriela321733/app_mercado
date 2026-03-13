@@ -407,29 +407,43 @@ if tela == "Mercado":
             )
 
                           # ranking
-            top_doadores.insert(
-                0,
-                "Posição",
-                [f"{i}º" for i in range(1, len(top_doadores) + 1)]
-            )
+            # top_doadores.insert(
+            #     0,
+            #     "Posição",
+            #     [f"{i}º" for i in range(1, len(top_doadores) + 1)]
+            # )
+            top_doadores["Posição"] = (top_doadores.index + 1).astype(str) + "º"
 
-            st.dataframe(
-                top_doadores
-                    .sort_values("Quantidade", ascending=False)
-                    .head(5)[[
+            # st.dataframe(
+            #     top_doadores
+            #         .sort_values("Quantidade", ascending=False)
+            #         .head(5)[[
+            #             "Posição",
+            #             "Nome doador",
+            #             "Quantidade",
+            #             "Financeiro"
+            #         ]]
+            #         .style.format({
+            #             "Quantidade": "{:,.0f}",
+            #             "Financeiro": "R$ {:,.2f}"
+            #         }),
+            #     use_container_width=True,
+            #     hide_index=True
+            # )
+
+                st.dataframe(
+                    top_doadores[[
                         "Posição",
                         "Nome doador",
                         "Quantidade",
                         "Financeiro"
-                    ]]
-                    .style.format({
+                    ]].style.format({
                         "Quantidade": "{:,.0f}",
                         "Financeiro": "R$ {:,.2f}"
                     }),
-                use_container_width=True,
-                hide_index=True
-            )
-
+                    use_container_width=True,
+                    hide_index=True
+                )
 
         with col2:
             st.markdown("**📥 Top 5 Tomadores**")
@@ -766,4 +780,5 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
