@@ -470,13 +470,13 @@ if tela == "Mercado":
                 .reset_index(drop=True)
             )
 
-            # top_tomadores.insert(
-            #     0,
-            #     "Posição",
-            #     [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
-            # )
+            top_tomadores.insert(
+                0,
+                "Posição",
+                [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
+            )
 
-            top_tomadores["Posição"] = (top_tomadores.index + 1).astype(str) + "º"
+            # top_tomadores["Posição"] = (top_tomadores.index + 1).astype(str) + "º"
 
             st.dataframe(
                 top_tomadores
@@ -795,6 +795,7 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
