@@ -470,25 +470,41 @@ if tela == "Mercado":
                 .reset_index(drop=True)
             )
 
-            top_tomadores.insert(
-                0,
-                "Posição",
-                [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
-            )
+            # top_tomadores.insert(
+            #     0,
+            #     "Posição",
+            #     [f"{i}º" for i in range(1, len(top_tomadores) + 1)]
+            # )
+
+            top_tomadores["Posição"] = (top_tomadores.index + 1).astype(str) + "º"
+
+            # st.dataframe(
+            #     top_tomadores
+            #         .sort_values("Quantidade", ascending=False)
+            #         .head(5)[[
+            #             "Posição",
+            #             "Nome tomador",
+            #             "Quantidade",
+            #             "Financeiro"
+            #         ]]
+            #         .style.format({
+            #             "Quantidade": "{:,.0f}",
+            #             "Financeiro": "R$ {:,.2f}"
+            #         }),
+            #     use_container_width=True,
+            #     hide_index=True
+            # )
 
             st.dataframe(
-                top_tomadores
-                    .sort_values("Quantidade", ascending=False)
-                    .head(5)[[
-                        "Posição",
-                        "Nome tomador",
-                        "Quantidade",
-                        "Financeiro"
-                    ]]
-                    .style.format({
-                        "Quantidade": "{:,.0f}",
-                        "Financeiro": "R$ {:,.2f}"
-                    }),
+                top_tomadores[[
+                    "Posição",
+                    "Nome doador",
+                    "Quantidade",
+                    "Financeiro"
+                ]].style.format({
+                    "Quantidade": "{:,.0f}",
+                    "Financeiro": "R$ {:,.2f}"
+                }),
                 use_container_width=True,
                 hide_index=True
             )
@@ -780,6 +796,7 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
