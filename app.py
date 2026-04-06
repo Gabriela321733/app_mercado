@@ -163,14 +163,38 @@ tela = st.sidebar.radio(
 st.subheader("📅 Período de Análise")
 
 # --- calcula D-1 útil ---
-hoje = pd.Timestamp.today().normalize()
-d_1_util = hoje - BDay(1)
+# hoje = pd.Timestamp.today().normalize()
+# d_1_util = hoje - BDay(1)
 
-# garante que está dentro do range do dataframe
+# # garante que está dentro do range do dataframe
+# data_min = df["Data de referência"].min()
+# data_max = df["Data de referência"].max()
+
+# data_default = min(max(d_1_util, data_min), data_max)
+
+# c1, c2 = st.columns(2)
+
+# data_ini = c1.date_input(
+#     "Data inicial",
+#     value=data_default.date()
+# )
+
+# data_fim = c2.date_input(
+#     "Data final",
+#     value=data_default.date()
+# )
+
+# df_filtrado = df[
+#     (df["Data de referência"] >= pd.to_datetime(data_ini)) &
+#     (df["Data de referência"] <= pd.to_datetime(data_fim))
+# ]
+
+# pega range do dataframe
 data_min = df["Data de referência"].min()
 data_max = df["Data de referência"].max()
 
-data_default = min(max(d_1_util, data_min), data_max)
+# define padrão como última data do CSV
+data_default = data_max
 
 c1, c2 = st.columns(2)
 
