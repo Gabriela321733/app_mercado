@@ -711,14 +711,23 @@ if tela == "Papel":
         )
 
     # -------------------------------------------------
-    pivot_excel = pivot_excel.rename_axis(
-        index=["Row Labels", ""],
-        columns="Column Labels"
-    )
+    # pivot_excel = pivot_excel.rename_axis(
+    #     index=["Row Labels", ""],
+    #     columns="Column Labels"
+    # )
 
-    pivot_excel = pivot_excel.applymap(
-    lambda x: 0 if x is None or pd.isna(x) else x
+    # pivot_excel = pivot_excel.applymap(
+    # lambda x: 0 if x is None or pd.isna(x) else x
+    # )
+
+    pivot_excel = pivot_excel.rename_axis(
+    index=["Row Labels", ""],
+    columns="Column Labels"
     )
+    
+    # substitui applymap
+    pivot_excel = pivot_excel.fillna(0)
+    
     # -------------------------------------------------
     # FORMATAÇÃO NUMÉRICA
     # -------------------------------------------------
