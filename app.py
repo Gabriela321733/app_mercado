@@ -274,7 +274,7 @@ if tela == "Mercado":
 
     st.subheader("📊 Papéis que mais rendem dinheiro")
     # Carrega tabela de preços
-    df_preco = pd.read_excel("preços.xlsx")
+    df_preco = pd.read_excel("last.xlsx")
 
     df_filtrado["Taxa % remuneração"] = (
     df_filtrado["Taxa % remuneração"]
